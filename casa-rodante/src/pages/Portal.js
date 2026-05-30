@@ -72,15 +72,41 @@ export default function Portal() {
         )}
       </div>
 
-      <footer style={{ background: 'var(--sidebar)', padding: '28px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-            <span className="logo-casa" style={{ fontSize: 14 }}>casa&nbsp;</span>
-            <span className="logo-rodante" style={{ fontSize: 20, color: '#fff' }}>rodante</span>
+      <footer style={{ background: 'var(--sidebar)', padding: '40px 32px 28px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
+            {/* Logo y eslogan */}
+            <div>
+              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1, marginBottom: 8 }}>
+                <span className="logo-casa" style={{ fontSize: 14 }}>casa</span>
+                <span className="logo-rodante" style={{ fontSize: 22, color: '#fff', marginTop: 2 }}>rodante</span>
+              </div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>nos hace bien ser diferentes</div>
+            </div>
+
+            {/* Links */}
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>Seguinos</div>
+              <a
+                href="https://www.youtube.com/@CasaRodante2026"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'rgba(255,255,255,0.7)', fontSize: 14, textDecoration: 'none', transition: 'color 0.15s' }}
+                onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                YouTube
+              </a>
+            </div>
           </div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 3, fontStyle: 'italic' }}>de cada pueblo un paisano</div>
+
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20, fontSize: 12, color: 'rgba(255,255,255,0.25)' }}>
+            © {new Date().getFullYear()} Casa Rodante · Todos los derechos reservados
+          </div>
         </div>
-        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>© {new Date().getFullYear()} Casa Rodante</div>
       </footer>
     </div>
   )

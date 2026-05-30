@@ -13,9 +13,9 @@ export default function Navbar({ categoriaActiva, onCategoria }) {
   return (
     <nav style={{ background: 'var(--azul)' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-          <span className="logo-casa" style={{ fontSize: 16 }}>casa&nbsp;</span>
-          <span className="logo-rodante" style={{ fontSize: 22, color: '#fff' }}>rodante</span>
+        <Link to="/" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1, textDecoration: 'none' }}>
+          <span className="logo-casa" style={{ fontSize: 13, lineHeight: 1 }}>casa</span>
+          <span className="logo-rodante" style={{ fontSize: 21, color: '#fff', lineHeight: 1, marginTop: 1 }}>rodante</span>
         </Link>
         <div style={{ display: 'flex', gap: 4 }}>
           {SECCIONES.map(s => (
