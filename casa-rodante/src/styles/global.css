@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap');
+
+:root {
+  --azul: #1B4FD8;
+  --azul-dark: #1340b0;
+  --naranja: #F07A2A;
+  --crema: #F5F0E8;
+  --crema-dark: #EDE8DF;
+  --texto: #1a1a1a;
+  --texto-suave: #666;
+  --borde: #E0D8C8;
+  --blanco: #ffffff;
+  --sidebar: #1a1a2e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--crema); color: var(--texto); line-height: 1.6; }
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: 'DM Sans', sans-serif; }
+img { max-width: 100%; display: block; }
+.logo-casa    { font-family: 'Pacifico', cursive; color: var(--naranja); }
+.logo-rodante { font-family: 'Pacifico', cursive; }
