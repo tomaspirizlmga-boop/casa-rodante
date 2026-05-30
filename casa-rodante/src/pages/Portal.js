@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import Navbar from '../components/public/Navbar'
 import NotaCard from '../components/public/NotaCard'
 import { getNotes } from '../lib/supabase'
@@ -37,6 +38,49 @@ const SECCIONES_PRESENTACION = [
     icon: '🗺️',
   },
 ]
+
+
+function EquipoPreview() {
+  const preview = [
+    { id: 1, nombre: 'Manu',  bg: '#F07A2A' },
+    { id: 2, nombre: 'Euge',  bg: '#1B4FD8' },
+    { id: 3, nombre: 'Magui', bg: '#F07A2A' },
+    { id: 4, nombre: 'Cata',  bg: '#1B4FD8' },
+    { id: 5, nombre: 'Delfi', bg: '#F07A2A' },
+    { id: 6, nombre: 'Agus',  bg: '#1B4FD8' },
+  ]
+  return (
+    <div style={{ background: 'var(--crema-dark)', padding: '48px 28px' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--azul)', textTransform: 'uppercase', letterSpacing: 1.5 }}>Los tripulantes</span>
+            <div style={{ width: 40, height: 1, background: 'var(--borde)' }} />
+          </div>
+          <Link to="/nosotros" style={{ fontSize: 13, fontWeight: 700, color: 'var(--azul)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
+            Ver todos →
+          </Link>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
+          {preview.map(p => (
+            <Link to="/nosotros" key={p.id} style={{ textDecoration: 'none' }}>
+              <div style={{ borderRadius: 12, overflow: 'hidden', background: p.bg, aspectRatio: '3/4', position: 'relative', transition: 'transform 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
+                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
+                <img src={`/equipo/${p.id}.gif`} alt={p.nombre}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
+                  onError={e => { e.target.style.display = 'none' }} />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.6))', padding: '20px 10px 8px' }}>
+                  <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 14, color: '#fff' }}>{p.nombre}</div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function SectionTitle({ label }) {
   return (
@@ -148,6 +192,8 @@ export default function Portal() {
           )}
         </div>
       )}
+
+      <EquipoPreview />
 
       <footer style={{ background: 'var(--sidebar)', padding: '48px 28px 28px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>

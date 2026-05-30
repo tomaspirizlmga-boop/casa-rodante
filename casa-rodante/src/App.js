@@ -6,10 +6,11 @@ import Portal from './pages/Portal'
 import Nota from './pages/Nota'
 import Login from './pages/Login'
 import Redaccion from './pages/Redaccion'
+import Nosotros from './pages/Nosotros'
 
 function PrivateRoute({ session, children }) {
   if (session === null) return <Navigate to="/redaccion/login" replace />
-  if (session === undefined) return null // cargando
+  if (session === undefined) return null
   return children
 }
 
@@ -26,6 +27,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Portal />} />
       <Route path="/nota/:id" element={<Nota />} />
+      <Route path="/nosotros" element={<Nosotros />} />
       <Route path="/redaccion/login" element={<Login session={session} />} />
       <Route path="/redaccion" element={
         <PrivateRoute session={session}>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const SECCIONES = [
   { label: 'Todas', val: 'todas' },
@@ -10,6 +10,9 @@ const SECCIONES = [
 ]
 
 export default function Navbar({ categoriaActiva, onCategoria }) {
+  const location = useLocation()
+  const enNosotros = location.pathname === '/nosotros'
+
   return (
     <nav style={{ background: 'var(--azul)', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 2px 12px rgba(0,0,0,0.15)' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
@@ -20,9 +23,9 @@ export default function Navbar({ categoriaActiva, onCategoria }) {
           <span style={{ fontFamily: 'Pacifico, cursive', fontSize: 20, color: '#fff', marginTop: 1 }}>rodante</span>
         </Link>
 
-        {/* Secciones */}
+        {/* Links */}
         <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-          {SECCIONES.map(s => (
+          {!enNosotros && SECCIONES.map(s => (
             <button
               key={s.val}
               onClick={() => onCategoria && onCategoria(s.val)}
@@ -38,6 +41,19 @@ export default function Navbar({ categoriaActiva, onCategoria }) {
             </button>
           ))}
 
+          <Link
+            to="/nosotros"
+            style={{
+              background: enNosotros ? 'rgba(255,255,255,0.18)' : 'none',
+              color: enNosotros ? '#fff' : 'rgba(255,255,255,0.7)',
+              fontSize: 13, fontWeight: enNosotros ? 700 : 500,
+              padding: '7px 14px', borderRadius: 20, transition: 'all 0.15s',
+              textDecoration: 'none', marginLeft: enNosotros ? 0 : 4,
+            }}
+          >
+            Nosotros
+          </Link>
+
           {/* En vivo */}
           <a
             href="https://www.youtube.com/@CasaRodante2026"
@@ -49,7 +65,7 @@ export default function Navbar({ categoriaActiva, onCategoria }) {
               fontSize: 12, fontWeight: 700,
               padding: '7px 16px', borderRadius: 20,
               display: 'flex', alignItems: 'center', gap: 6,
-              textDecoration: 'none', transition: 'background 0.15s',
+              textDecoration: 'none',
             }}
           >
             <span style={{ width: 7, height: 7, background: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'pulse 1.2s infinite' }} />
@@ -57,10 +73,7 @@ export default function Navbar({ categoriaActiva, onCategoria }) {
           </a>
         </div>
       </div>
-
-      <style>{`
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-      `}</style>
+      <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }`}</style>
     </nav>
   )
 }
