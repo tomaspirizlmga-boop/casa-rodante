@@ -66,7 +66,7 @@ export default function Nosotros() {
                   src={`/equipo/${persona.id}.gif`}
                   alt={persona.nombre}
                   style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
-                  onError={e => { e.target.style.display = 'none' }}
+                  
                 />
                 {/* Overlay con nombre */}
                 <div style={{

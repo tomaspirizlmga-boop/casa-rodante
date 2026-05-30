@@ -69,7 +69,7 @@ function EquipoPreview() {
                 onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
                 <img src={`/equipo/${p.id}.gif`} alt={p.nombre}
                   style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
-                  onError={e => { e.target.style.display = 'none' }} />
+                   />
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.6))', padding: '20px 10px 8px' }}>
                   <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 14, color: '#fff' }}>{p.nombre}</div>
                 </div>
