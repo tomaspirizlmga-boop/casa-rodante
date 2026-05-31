@@ -21,25 +21,14 @@ function RichEditor({ value, onChange }) {
   const editorRef = useRef(null)
   const lastValueRef = useRef(null)
 
-  // Load content whenever value changes externally (new note, edit note, clear form)
+  // Always sync content when value changes externally (edit note, new note, clear)
   useEffect(() => {
-    if (editorRef.current && value !== lastValueRef.current) {
-      const active = document.activeElement
-      const hasFocus = editorRef.current === active || editorRef.current.contains(active)
-      if (!hasFocus) {
-        editorRef.current.innerHTML = value || ''
-        lastValueRef.current = value
-      }
-    }
-  }, [value])
-
-  // On mount, set initial content
-  useEffect(() => {
-    if (editorRef.current) {
+    if (!editorRef.current) return
+    if (value !== lastValueRef.current) {
       editorRef.current.innerHTML = value || ''
       lastValueRef.current = value
     }
-  }, [])
+  }, [value])
 
   const exec = (cmd, val = null) => {
     editorRef.current.focus()
@@ -310,7 +299,7 @@ export default function Redaccion({ session }) {
 
             <div style={{ marginBottom: 14 }}>
               <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 5 }}>Cuerpo de la nota</label>
-              <RichEditor value={form.cuerpo} onChange={val => setForm(f => ({ ...f, cuerpo: val }))} />
+              <RichEditor key={editId || 'new'} value={form.cuerpo} onChange={val => setForm(f => ({ ...f, cuerpo: val }))} />
             </div>
           </div>
         )}

@@ -28,7 +28,7 @@ export const getNoteById = async (id) =>
   supabase.from('notas').select('*').eq('id', id).eq('publicada', true).single()
 
 export const getAllNotes = async () =>
-  supabase.from('notas').select('id, titulo, categoria, autor, publicada, created_at, orden, fecha_publicacion').order('orden', { ascending: true }).order('created_at', { ascending: false })
+  supabase.from('notas').select('*').order('orden', { ascending: true }).order('created_at', { ascending: false })
 
 export const createNote = async (nota) =>
   supabase.from('notas').insert([nota]).select().single()
