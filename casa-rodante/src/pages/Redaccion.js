@@ -39,7 +39,6 @@ function RichEditor({ value, onChange }) {
       editorRef.current.innerHTML = value || ''
       lastValueRef.current = value
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const exec = (cmd, val = null) => {
