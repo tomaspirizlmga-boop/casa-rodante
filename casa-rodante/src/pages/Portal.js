@@ -5,40 +5,20 @@ import NotaCard from '../components/public/NotaCard'
 import { getNotes } from '../lib/supabase'
 
 const SECCIONES_PRESENTACION = [
-  {
-    val: 'entrevista',
-    nombre: 'El Pasajero',
-    tipo: 'Entrevista',
-    desc: 'El que sube a la casa rodante por un rato. Conversaciones con personas que tienen algo para contar.',
-    color: 'var(--azul)',
-    icon: '🎙️',
-  },
-  {
-    val: 'noticias',
-    nombre: 'La vuelta al mundo',
-    tipo: 'Noticias',
-    desc: 'Lo que pasó en el planeta, contado desde acá. Sin filtros, con perspectiva.',
-    color: 'var(--azul)',
-    icon: '🌍',
-  },
-  {
-    val: 'columna',
-    nombre: 'La Ventana',
-    tipo: 'Columna',
-    desc: 'El punto de vista personal de uno de los tripulantes. Opinión que no pide permiso.',
-    color: 'var(--naranja)',
-    icon: '✍️',
-  },
-  {
-    val: 'informe',
-    nombre: 'El Campamento',
-    tipo: 'Informe',
-    desc: 'Cuando la casa rodante para y se instala en un lugar a explorar de verdad.',
-    color: '#1a1a2e',
-    icon: '🗺️',
-  },
+  { val: 'entrevista', nombre: 'El Pasajero',      tipo: 'Entrevista',  desc: 'El que sube a la casa rodante por un rato. Conversaciones con personas que tienen algo para contar.', color: 'var(--azul)',    img: '/ilustraciones/pasajero.png' },
+  { val: 'noticias',   nombre: 'La vuelta al mundo',tipo: 'Noticias',    desc: 'Lo que pasó en el planeta, contado desde acá. Sin filtros, con perspectiva.',                          color: 'var(--azul)',    img: '/ilustraciones/noticias.png' },
+  { val: 'columna',    nombre: 'La Ventana',        tipo: 'Columna',     desc: 'El punto de vista personal de uno de los tripulantes. Opinión que no pide permiso.',                    color: 'var(--naranja)', img: '/ilustraciones/ventana.png' },
+  { val: 'informe',    nombre: 'El Campamento',     tipo: 'Informe',     desc: 'Cuando la casa rodante para y se instala en un lugar a explorar de verdad.',                           color: '#1a1a2e',        img: '/ilustraciones/campamento.png' },
 ]
 
+function SectionTitle({ label }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--azul)', textTransform: 'uppercase', letterSpacing: 1.5, whiteSpace: 'nowrap' }}>{label}</span>
+      <div style={{ flex: 1, height: 1, background: 'var(--borde)' }} />
+    </div>
+  )
+}
 
 function EquipoPreview() {
   const preview = [
@@ -57,19 +37,17 @@ function EquipoPreview() {
             <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--azul)', textTransform: 'uppercase', letterSpacing: 1.5 }}>Los tripulantes</span>
             <div style={{ width: 40, height: 1, background: 'var(--borde)' }} />
           </div>
-          <Link to="/nosotros" style={{ fontSize: 13, fontWeight: 700, color: 'var(--azul)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
-            Ver todos →
-          </Link>
+          <Link to="/nosotros" style={{ fontSize: 13, fontWeight: 700, color: 'var(--azul)', textDecoration: 'none' }}>Ver todos →</Link>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
           {preview.map(p => (
             <Link to="/nosotros" key={p.id} style={{ textDecoration: 'none' }}>
-              <div style={{ borderRadius: 12, overflow: 'hidden', background: p.bg, aspectRatio: '3/4', position: 'relative', transition: 'transform 0.2s' }}
+              <div
+                style={{ borderRadius: 12, overflow: 'hidden', background: p.bg, aspectRatio: '3/4', position: 'relative', transition: 'transform 0.2s' }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
-                <img src={`/equipo/${p.id}.gif`} alt={p.nombre}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
-                   />
+                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+              >
+                <img src={`/equipo/${p.id}.gif`} alt={p.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.6))', padding: '20px 10px 8px' }}>
                   <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 14, color: '#fff' }}>{p.nombre}</div>
                 </div>
@@ -82,33 +60,21 @@ function EquipoPreview() {
   )
 }
 
-function SectionTitle({ label }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--azul)', textTransform: 'uppercase', letterSpacing: 1.5, whiteSpace: 'nowrap' }}>{label}</span>
-      <div style={{ flex: 1, height: 1, background: 'var(--borde)' }} />
-    </div>
-  )
-}
-
 function EmptyState() {
   return (
     <div>
-      {/* Hero vacío */}
-      <div style={{ background: 'var(--azul)', padding: '60px 28px 80px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ background: 'var(--azul)', padding: '60px 28px 90px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, opacity: 0.04, backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
         <div style={{ position: 'relative', maxWidth: 560, margin: '0 auto' }}>
           <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 13, color: 'var(--naranja)', marginBottom: 4 }}>casa</div>
           <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 52, color: '#fff', lineHeight: 1, marginBottom: 16 }}>rodante</div>
+          {/* Furgoneta */}
+          <img src="/ilustraciones/casa-rodante.png" alt="Casa Rodante" style={{ width: 200, margin: '0 auto 20px', filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.35))' }} />
           <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 16, lineHeight: 1.7, fontStyle: 'italic', marginBottom: 28 }}>
             nos hace bien ser diferentes
           </p>
-          <a
-            href="https://www.youtube.com/@CasaRodante2026"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ background: 'var(--naranja)', color: '#fff', padding: '11px 28px', borderRadius: 24, fontSize: 14, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}
-          >
+          <a href="https://www.youtube.com/@CasaRodante2026" target="_blank" rel="noopener noreferrer"
+            style={{ background: 'var(--naranja)', color: '#fff', padding: '11px 28px', borderRadius: 24, fontSize: 14, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             Seguinos en YouTube
           </a>
@@ -118,24 +84,25 @@ function EmptyState() {
         </svg>
       </div>
 
-      {/* Secciones */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '48px 28px 64px' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '48px 28px 32px' }}>
         <SectionTitle label="Qué vas a encontrar acá" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 48 }}>
           {SECCIONES_PRESENTACION.map(s => (
-            <div key={s.val} style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--borde)', padding: '24px 26px', display: 'flex', gap: 18, alignItems: 'flex-start' }}>
-              <div style={{ width: 48, height: 48, borderRadius: 12, background: s.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
-                {s.icon}
+            <div key={s.val} style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--borde)', padding: '24px 26px', display: 'flex', gap: 20, alignItems: 'center' }}>
+              <div style={{ width: 72, height: 72, borderRadius: 12, background: s.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <img src={s.img} alt={s.nombre} style={{ width: 52, height: 52, objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} />
               </div>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: s.color, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>{s.tipo}</div>
-                <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 17, color: 'var(--texto)', marginBottom: 6 }}>{s.nombre}</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: s.color, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 3 }}>{s.tipo}</div>
+                <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 17, color: 'var(--texto)', marginBottom: 5 }}>{s.nombre}</div>
                 <p style={{ fontSize: 13, color: 'var(--texto-suave)', lineHeight: 1.6 }}>{s.desc}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      <EquipoPreview />
     </div>
   )
 }
@@ -173,7 +140,6 @@ export default function Portal() {
       ) : (
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '36px 28px 64px' }}>
           {featured && <NotaCard nota={featured} featured />}
-
           {rest.length > 0 && (
             <>
               <SectionTitle label="Últimas notas" />
@@ -182,7 +148,6 @@ export default function Portal() {
               </div>
             </>
           )}
-
           {totalPages > 1 && (
             <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
@@ -198,10 +163,13 @@ export default function Portal() {
       <footer style={{ background: 'var(--sidebar)', padding: '48px 28px 28px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 36 }}>
-            <div>
-              <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 12, color: 'var(--naranja)', lineHeight: 1 }}>casa</div>
-              <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 26, color: '#fff', lineHeight: 1, marginTop: 2, marginBottom: 10 }}>rodante</div>
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', fontStyle: 'italic' }}>nos hace bien ser diferentes</div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20 }}>
+              <img src="/ilustraciones/casa-rodante.png" alt="Casa Rodante" style={{ width: 80, filter: 'brightness(0.9)' }} />
+              <div>
+                <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 12, color: 'var(--naranja)', lineHeight: 1 }}>casa</div>
+                <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 26, color: '#fff', lineHeight: 1, marginTop: 2, marginBottom: 8 }}>rodante</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', fontStyle: 'italic' }}>nos hace bien ser diferentes</div>
+              </div>
             </div>
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 14 }}>Seguinos</div>
