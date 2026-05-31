@@ -188,13 +188,16 @@ export default function Redaccion({ session }) {
   }
 
   const moverNota = async (nota, dir) => {
-    const sorted = [...notas].sort((a, b) => (a.orden || 0) - (b.orden || 0))
+    const sorted = [...notas].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
     const idx = sorted.findIndex(n => n.id === nota.id)
     const swapIdx = idx + dir
     if (swapIdx < 0 || swapIdx >= sorted.length) return
-    const other = sorted[swapIdx]
-    await updateNote(nota.id, { orden: other.orden || swapIdx })
-    await updateNote(other.id, { orden: nota.orden || idx })
+    // Normalize all positions first, then swap the two
+    const updates = sorted.map((n, i) => ({ id: n.id, orden: i }))
+    const temp = updates[idx].orden
+    updates[idx].orden = updates[swapIdx].orden
+    updates[swapIdx].orden = temp
+    await Promise.all(updates.map(u => updateNote(u.id, { orden: u.orden })))
     loadNotas()
   }
 
