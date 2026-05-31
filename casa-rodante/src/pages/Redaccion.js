@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop'
+import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 import { useNavigate } from 'react-router-dom'
 import { getAllNotes, createNote, updateNote, deleteNote, uploadFoto, uploadInlineImage, signOut } from '../lib/supabase'
@@ -153,7 +153,6 @@ function CropModal({ file, onConfirm, onCancel }) {
   const [crop, setCrop] = useState()
   const [completedCrop, setCompletedCrop] = useState()
   const imgRef = useRef(null)
-  const ASPECT = 16 / 9
 
   useEffect(() => {
     const reader = new FileReader()
@@ -163,11 +162,8 @@ function CropModal({ file, onConfirm, onCancel }) {
 
   const onImageLoad = (e) => {
     const { naturalWidth: width, naturalHeight: height } = e.currentTarget
-    const c = centerCrop(
-      makeAspectCrop({ unit: '%', width: 90 }, ASPECT, width, height),
-      width, height
-    )
-    setCrop(c)
+    // Start with a free-form crop covering 90% of the image
+    setCrop({ unit: '%', x: 5, y: 5, width: 90, height: 90 })
   }
 
   const handleConfirm = useCallback(() => {
@@ -196,13 +192,12 @@ function CropModal({ file, onConfirm, onCancel }) {
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <div style={{ background: '#fff', borderRadius: 14, padding: 24, maxWidth: 620, width: '100%' }}>
         <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Recortar foto de portada</div>
-        <div style={{ fontSize: 12, color: '#888', marginBottom: 16 }}>Arrastrá el recuadro y ajustá las esquinas para elegir el área (proporción 16:9)</div>
+        <div style={{ fontSize: 12, color: '#888', marginBottom: 16 }}>Arrastrá el recuadro y ajustá las esquinas para elegir el área libremente</div>
         <div style={{ maxHeight: '60vh', overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
           <ReactCrop
             crop={crop}
             onChange={c => setCrop(c)}
             onComplete={c => setCompletedCrop(c)}
-            aspect={ASPECT}
             minWidth={80}
           >
             <img ref={imgRef} src={imgSrc} alt="recortar" onLoad={onImageLoad} style={{ maxWidth: '100%', maxHeight: '55vh' }} />
