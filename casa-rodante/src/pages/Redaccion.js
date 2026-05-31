@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getAllNotes, createNote, updateNote, deleteNote, uploadFoto, signOut } from '../lib/supabase'
+import { getAllNotes, createNote, updateNote, deleteNote, uploadFoto, uploadInlineImage, signOut } from '../lib/supabase'
 
 const CATEGORIAS = [
   { val: 'noticias',   label: 'Noticias · La vuelta al mundo' },
@@ -17,18 +17,30 @@ const emptyForm = {
   fecha_publicacion: new Date().toISOString().split('T')[0],
 }
 
-function RichEditor({ value, onChange }) {
+function RichEditor({ value, onChange, notaId }) {
   const editorRef = useRef(null)
   const lastValueRef = useRef(null)
+  const imageInputRef = useRef(null)
 
-  // Always sync content when value changes externally (edit note, new note, clear)
+  // Load content whenever value changes externally (new note, edit note, clear form)
   useEffect(() => {
-    if (!editorRef.current) return
-    if (value !== lastValueRef.current) {
+    if (editorRef.current && value !== lastValueRef.current) {
+      const active = document.activeElement
+      const hasFocus = editorRef.current === active || editorRef.current.contains(active)
+      if (!hasFocus) {
+        editorRef.current.innerHTML = value || ''
+        lastValueRef.current = value
+      }
+    }
+  }, [value])
+
+  // On mount, set initial content
+  useEffect(() => {
+    if (editorRef.current) {
       editorRef.current.innerHTML = value || ''
       lastValueRef.current = value
     }
-  }, [value])
+  }, [])
 
   const exec = (cmd, val = null) => {
     editorRef.current.focus()
@@ -48,6 +60,19 @@ function RichEditor({ value, onChange }) {
     const text = sel && sel.toString() ? sel.toString() : 'Escribí la cita acá'
     document.execCommand('insertHTML', false, `<blockquote style="border-left:3px solid #F07A2A;padding:12px 20px;margin:20px 0;background:#fff8f4;border-radius:0 8px 8px 0;font-style:italic;color:#444">${text}</blockquote><p><br></p>`)
     handleInput()
+  }
+
+  const insertImage = async (file) => {
+    if (!file) return
+    try {
+      const url = await uploadInlineImage(file, notaId || 'temp-' + Date.now())
+      editorRef.current.focus()
+      document.execCommand('insertHTML', false,
+        `<img src="${url}" alt="" style="max-width:100%;border-radius:8px;margin:12px 0;display:block;" />`)
+      handleInput()
+    } catch (e) {
+      alert('Error al subir la imagen: ' + e.message)
+    }
   }
 
   const btnStyle = (active = false) => ({
@@ -93,6 +118,13 @@ function RichEditor({ value, onChange }) {
           onMouseDown={e => { e.preventDefault(); insertBlockquote() }} title="Insertar cita destacada">
           " Cita
         </button>
+        <div style={{ width: 1, height: 20, background: '#ddd', margin: '0 4px' }} />
+        <button style={{ ...btnStyle(), fontSize: 11, padding: '5px 10px', background: '#f0f4ff', border: '1px solid #1B4FD8', color: '#1B4FD8', borderRadius: 6 }}
+          onMouseDown={e => { e.preventDefault(); imageInputRef.current && imageInputRef.current.click() }} title="Insertar imagen">
+          🖼️ Foto
+        </button>
+        <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }}
+          onChange={e => { const f = e.target.files[0]; e.target.value = ''; if (f) insertImage(f) }} />
       </div>
       {/* Editor */}
       <div
@@ -114,6 +146,96 @@ function RichEditor({ value, onChange }) {
   )
 }
 
+function CropModal({ file, onConfirm, onCancel }) {
+  const canvasRef = useRef(null)
+  const imgRef = useRef(null)
+  const [imgSrc, setImgSrc] = useState(null)
+  const [crop, setCrop] = useState({ x: 0, y: 0, w: 0, h: 0 })
+  const [dragging, setDragging] = useState(null)
+  const [imgNatural, setImgNatural] = useState({ w: 1, h: 1 })
+
+  useEffect(() => {
+    const reader = new FileReader()
+    reader.onload = e => setImgSrc(e.target.result)
+    reader.readAsDataURL(file)
+  }, [file])
+
+  const onImgLoad = (e) => {
+    const img = e.target
+    const maxW = 520
+    const scale = img.naturalWidth > maxW ? maxW / img.naturalWidth : 1
+    const dw = Math.round(img.naturalWidth * scale)
+    const dh = Math.round(img.naturalHeight * scale)
+    img.width = dw; img.height = dh
+    setImgNatural({ w: img.naturalWidth, h: img.naturalHeight, dw, dh, scale })
+    setCrop({ x: 0, y: 0, w: dw, h: dh })
+  }
+
+  const getPos = (e) => {
+    const rect = imgRef.current.getBoundingClientRect()
+    return { x: (e.clientX || e.touches?.[0]?.clientX) - rect.left, y: (e.clientY || e.touches?.[0]?.clientY) - rect.top }
+  }
+
+  const onMouseDown = (e) => {
+    e.preventDefault()
+    const p = getPos(e)
+    setDragging({ startX: p.x, startY: p.y, origCrop: { ...crop } })
+  }
+
+  const onMouseMove = (e) => {
+    if (!dragging) return
+    const p = getPos(e)
+    const dx = p.x - dragging.startX, dy = p.y - dragging.startY
+    const { dw, dh } = imgNatural
+    setCrop(c => ({
+      x: Math.max(0, Math.min(dw - c.w, dragging.origCrop.x + dx)),
+      y: Math.max(0, Math.min(dh - c.h, dragging.origCrop.y + dy)),
+      w: c.w, h: c.h,
+    }))
+  }
+
+  const handleConfirm = () => {
+    const canvas = document.createElement('canvas')
+    const { w, h, scale } = imgNatural
+    const scaleX = imgNatural.w / (imgNatural.dw || 1)
+    const scaleY = imgNatural.h / (imgNatural.dh || 1)
+    canvas.width = Math.round(crop.w * scaleX)
+    canvas.height = Math.round(crop.h * scaleY)
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(imgRef.current, crop.x * scaleX, crop.y * scaleY, crop.w * scaleX, crop.h * scaleY, 0, 0, canvas.width, canvas.height)
+    canvas.toBlob(blob => {
+      const croppedFile = new File([blob], file.name, { type: 'image/jpeg' })
+      onConfirm(croppedFile)
+    }, 'image/jpeg', 0.92)
+  }
+
+  if (!imgSrc) return null
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ background: '#fff', borderRadius: 14, padding: 24, maxWidth: 580, width: '90%' }}>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Recortar foto de portada</div>
+        <div style={{ fontSize: 12, color: '#888', marginBottom: 14 }}>Arrastrá la imagen para elegir qué parte mostrar</div>
+        <div style={{ position: 'relative', display: 'inline-block', cursor: 'move', userSelect: 'none', maxWidth: '100%' }}
+          onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={() => setDragging(null)} onMouseLeave={() => setDragging(null)}>
+          <img ref={imgRef} src={imgSrc} alt="crop" onLoad={onImgLoad} style={{ display: 'block', borderRadius: 8 }} draggable={false} />
+          {imgNatural.dw && (
+            <div style={{
+              position: 'absolute', border: '2px solid #1B4FD8', borderRadius: 4, pointerEvents: 'none',
+              left: crop.x, top: crop.y, width: crop.w, height: crop.h,
+              boxShadow: '0 0 0 9999px rgba(0,0,0,0.45)',
+            }} />
+          )}
+        </div>
+        <div style={{ marginTop: 16, display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+          <button onClick={onCancel} style={{ padding: '8px 20px', borderRadius: 8, border: '1px solid #ddd', background: '#fff', cursor: 'pointer', fontSize: 13 }}>Cancelar</button>
+          <button onClick={handleConfirm} style={{ padding: '8px 20px', borderRadius: 8, border: 'none', background: 'var(--azul)', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>Usar esta foto</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Redaccion({ session }) {
   const navigate = useNavigate()
   const [seccion, setSeccion] = useState('notas')
@@ -123,6 +245,7 @@ export default function Redaccion({ session }) {
   const [fotoFile, setFotoFile] = useState(null)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
+  const [cropFile, setCropFile] = useState(null)
 
   const loadNotas = () => getAllNotes().then(({ data }) => setNotas(data || []))
   useEffect(() => { loadNotas() }, [])
@@ -288,18 +411,25 @@ export default function Redaccion({ session }) {
             <div style={{ marginBottom: 14 }}>
               <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 5 }}>Foto de portada</label>
               <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed var(--borde)', borderRadius: 10, padding: 20, cursor: 'pointer', background: '#fff', textAlign: 'center' }}>
-                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => setFotoFile(e.target.files[0])} />
+                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { if (e.target.files[0]) setCropFile(e.target.files[0]); e.target.value = '' }} />
                 <span style={{ fontSize: 22, marginBottom: 6 }}>📷</span>
                 {fotoFile
                   ? <span style={{ fontSize: 13, color: 'var(--azul)', fontWeight: 600 }}>{fotoFile.name}</span>
                   : <span style={{ fontSize: 13, color: '#aaa' }}><strong style={{ color: 'var(--azul)' }}>Hacé click</strong> para subir imagen</span>
                 }
               </label>
+              {cropFile && (
+                <CropModal
+                  file={cropFile}
+                  onConfirm={croppedFile => { setFotoFile(croppedFile); setCropFile(null) }}
+                  onCancel={() => setCropFile(null)}
+                />
+              )}
             </div>
 
             <div style={{ marginBottom: 14 }}>
               <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 5 }}>Cuerpo de la nota</label>
-              <RichEditor key={editId || 'new'} value={form.cuerpo} onChange={val => setForm(f => ({ ...f, cuerpo: val }))} />
+              <RichEditor key={editId || 'new'} value={form.cuerpo} onChange={val => setForm(f => ({ ...f, cuerpo: val }))} notaId={editId} />
             </div>
           </div>
         )}

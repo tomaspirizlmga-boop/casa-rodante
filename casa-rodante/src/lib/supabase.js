@@ -47,3 +47,12 @@ export const uploadFoto = async (file, notaId) => {
   const { data } = supabase.storage.from('fotos').getPublicUrl(path)
   return data.publicUrl
 }
+
+export const uploadInlineImage = async (file, notaId) => {
+  const ext = file.name.split('.').pop()
+  const path = `inline/${notaId}-${Date.now()}.${ext}`
+  const { error } = await supabase.storage.from('fotos').upload(path, file, { upsert: true })
+  if (error) throw error
+  const { data } = supabase.storage.from('fotos').getPublicUrl(path)
+  return data.publicUrl
+}
