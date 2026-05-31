@@ -21,26 +21,23 @@ function SectionTitle({ label }) {
 }
 
 function EquipoPreview() {
-  const preview = [
+  const conductores = [
     { id: 1, nombre: 'Manu',  bg: '#F07A2A' },
     { id: 2, nombre: 'Euge',  bg: '#1B4FD8' },
     { id: 3, nombre: 'Magui', bg: '#F07A2A' },
-    { id: 4, nombre: 'Cata',  bg: '#1B4FD8' },
-    { id: 5, nombre: 'Delfi', bg: '#F07A2A' },
-    { id: 6, nombre: 'Agus',  bg: '#1B4FD8' },
   ]
   return (
     <div style={{ background: 'var(--crema-dark)', padding: '48px 28px' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--azul)', textTransform: 'uppercase', letterSpacing: 1.5 }}>Los tripulantes</span>
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--azul)', textTransform: 'uppercase', letterSpacing: 1.5 }}>Los conductores</span>
             <div style={{ width: 40, height: 1, background: 'var(--borde)' }} />
           </div>
           <Link to="/nosotros" style={{ fontSize: 13, fontWeight: 700, color: 'var(--azul)', textDecoration: 'none' }}>Ver todos →</Link>
         </div>
-        <div className='cr-equipo-grid' style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
-          {preview.map(p => (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, maxWidth: 600, margin: '0 auto' }}>
+          {conductores.map(p => (
             <Link to="/nosotros" key={p.id} style={{ textDecoration: 'none' }}>
               <div
                 style={{ borderRadius: 12, overflow: 'hidden', background: p.bg, aspectRatio: '3/4', position: 'relative', transition: 'transform 0.2s' }}
@@ -135,13 +132,20 @@ export default function Portal() {
     })
   }, [categoria, page])
 
-  const totalPages = Math.ceil(total / PAGE_SIZE)
-  const featured = notas[0]
-  const rest = notas.slice(1)
+  const last3 = notas.slice(0, 3)
 
   return (
     <div>
       <Navbar categoriaActiva={categoria} onCategoria={setCategoria} />
+
+      {/* Hero GIF */}
+      <div style={{ width: '100%', lineHeight: 0 }}>
+        <img
+          src="/portada.gif"
+          alt="Casa Rodante"
+          style={{ width: '100%', display: 'block', maxHeight: 520, objectFit: 'cover', objectPosition: 'center top' }}
+        />
+      </div>
 
       {loading ? (
         <div style={{ textAlign: 'center', padding: 100, color: 'var(--texto-suave)', fontSize: 14 }}>Cargando...</div>
@@ -149,22 +153,15 @@ export default function Portal() {
         <EmptyState />
       ) : (
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(16px, 4vw, 36px) clamp(16px, 4vw, 28px) 64px' }}>
-          {featured && <NotaCard nota={featured} featured />}
-          {rest.length > 0 && (
-            <>
-              <SectionTitle label="Últimas publicaciones" />
-              <div className='cr-grid-notas' style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18, marginBottom: 40 }}>
-                {rest.map(n => <NotaCard key={n.id} nota={n} />)}
-              </div>
-            </>
-          )}
-          {totalPages > 1 && (
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                <button key={p} onClick={() => setPage(p)} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid var(--borde)', background: p === page ? 'var(--azul)' : '#fff', color: p === page ? '#fff' : '#555', fontSize: 13, fontWeight: 600 }}>{p}</button>
-              ))}
-            </div>
-          )}
+          <SectionTitle label="Últimas publicaciones" />
+          <div className='cr-grid-notas' style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18, marginBottom: 40 }}>
+            {last3.map(n => <NotaCard key={n.id} nota={n} />)}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Link to="/notas" style={{ background: 'var(--azul)', color: '#fff', padding: '10px 28px', borderRadius: 24, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+              Ver todas las notas →
+            </Link>
+          </div>
         </div>
       )}
 
