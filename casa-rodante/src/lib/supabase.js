@@ -41,8 +41,8 @@ export const deleteNote = async (id) =>
 export const uploadFoto = async (file, notaId) => {
   const ext = file.name.split('.').pop()
   const path = `notas/${notaId}.${ext}`
-  const { error } = await supabase.storage.from('FOTOS').upload(path, file, { upsert: true })
+  const { error } = await supabase.storage.from('fotos').upload(path, file, { upsert: true })
   if (error) throw error
-  const { data } = supabase.storage.from('FOTOS').getPublicUrl(path)
+  const { data } = supabase.storage.from('fotos').getPublicUrl(path)
   return data.publicUrl
 }
