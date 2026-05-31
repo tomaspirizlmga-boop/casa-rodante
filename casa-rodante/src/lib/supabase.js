@@ -15,8 +15,9 @@ export const getSession = () => supabase.auth.getSession()
 export const getNotes = async ({ categoria, page = 1, pageSize = 9 } = {}) => {
   let query = supabase
     .from('notas')
-    .select('id, titulo, resumen, categoria, autor, foto_url, created_at', { count: 'exact' })
+    .select('id, titulo, resumen, categoria, autor, foto_url, created_at, orden, fecha_publicacion', { count: 'exact' })
     .eq('publicada', true)
+    .order('orden', { ascending: true })
     .order('created_at', { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1)
   if (categoria && categoria !== 'todas') query = query.eq('categoria', categoria)
@@ -27,7 +28,7 @@ export const getNoteById = async (id) =>
   supabase.from('notas').select('*').eq('id', id).eq('publicada', true).single()
 
 export const getAllNotes = async () =>
-  supabase.from('notas').select('id, titulo, categoria, autor, publicada, created_at').order('created_at', { ascending: false })
+  supabase.from('notas').select('id, titulo, categoria, autor, publicada, created_at, orden, fecha_publicacion').order('orden', { ascending: true }).order('created_at', { ascending: false })
 
 export const createNote = async (nota) =>
   supabase.from('notas').insert([nota]).select().single()
