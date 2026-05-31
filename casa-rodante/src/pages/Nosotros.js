@@ -34,7 +34,7 @@ export default function Nosotros() {
             <span style={{ color: 'var(--naranja)' }}>los</span> tripulantes
           </h1>
           {/* Ilustración casa rodante */}
-          <img src="/ilustraciones/casa-rodante.png" alt="Casa Rodante" style={{ width: 240, margin: '16px auto 0', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.3))' }} />
+          <img src="/ilustraciones/casa-rodante.png" alt="Casa Rodante" style={{ width: 340, margin: '16px auto 0', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.3))' }} />
         </div>
         <svg style={{ position: 'absolute', bottom: -1, left: 0, right: 0, width: '100%' }} viewBox="0 0 1100 48" preserveAspectRatio="none">
           <path d="M0,24 C275,48 825,0 1100,24 L1100,48 L0,48 Z" fill="#F5F0E8"/>

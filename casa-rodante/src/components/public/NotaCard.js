@@ -48,7 +48,7 @@ export default function NotaCard({ nota, featured = false }) {
         <div style={{ position: 'relative', overflow: 'hidden', background: '#0f3aad', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           {nota.foto_url
             ? <img src={nota.foto_url} alt={nota.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            : <img src={cat.img} alt={cat.sub} style={{ width: '88%', opacity: 0.9, filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.3))' }} />
+            : <img src={cat.img} alt={cat.sub} style={{ width: '95%', opacity: 0.9, filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.3))' }} />
           }
         </div>
       </div>
@@ -65,7 +65,7 @@ export default function NotaCard({ nota, featured = false }) {
       <div style={{ height: 140, background: cat.color, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {nota.foto_url
           ? <img src={nota.foto_url} alt={nota.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
-          : <img src={cat.img} alt={cat.sub} style={{ width: '85%', opacity: 0.92, filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.25))', position: 'relative', zIndex: 1 }} />
+          : <img src={cat.img} alt={cat.sub} style={{ width: '95%', opacity: 0.92, filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.25))', position: 'relative', zIndex: 1 }} />
         }
         <div style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(255,255,255,0.93)', color: cat.color, fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 12, textTransform: 'uppercase', letterSpacing: 0.3, zIndex: 2 }}>
           {cat.label}
