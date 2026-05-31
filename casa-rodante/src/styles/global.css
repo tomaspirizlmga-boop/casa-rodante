@@ -20,3 +20,67 @@ button { cursor: pointer; font-family: 'DM Sans', sans-serif; }
 img { max-width: 100%; display: block; }
 .logo-casa    { font-family: 'Pacifico', cursive; color: var(--naranja); }
 .logo-rodante { font-family: 'Pacifico', cursive; }
+
+/* Rich editor styles */
+[contenteditable] blockquote {
+  border-left: 3px solid var(--naranja);
+  padding: 12px 20px;
+  margin: 20px 0;
+  background: #fff8f4;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: #444;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  /* Navbar */
+  .cr-nav-links { display: none !important; }
+  .cr-nav-mobile { display: flex !important; }
+
+  /* Featured card */
+  .cr-featured-card {
+    grid-template-columns: 1fr !important;
+  }
+  .cr-featured-img { display: none !important; }
+
+  /* Grid notas */
+  .cr-grid-notas {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Secciones */
+  .cr-secciones-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Equipo preview */
+  .cr-equipo-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* Equipo nosotros */
+  .cr-equipo-nosotros {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Footer */
+  .cr-footer-inner {
+    flex-direction: column !important;
+    gap: 24px !important;
+  }
+
+  /* Nota */
+  .cr-nota-inner {
+    padding: 20px 16px 48px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .cr-equipo-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .cr-equipo-nosotros {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

@@ -33,8 +33,6 @@ export default function Nosotros() {
           <h1 style={{ fontFamily: 'Pacifico, cursive', fontSize: 48, color: '#fff', lineHeight: 1.1, marginBottom: 16 }}>
             <span style={{ color: 'var(--naranja)' }}>los</span> tripulantes
           </h1>
-          {/* Ilustración casa rodante */}
-          <img src="/ilustraciones/casa-rodante.png" alt="Casa Rodante" style={{ width: 340, margin: '16px auto 0', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.3))', mixBlendMode: 'multiply' }} />
         </div>
         <svg style={{ position: 'absolute', bottom: -1, left: 0, right: 0, width: '100%' }} viewBox="0 0 1100 48" preserveAspectRatio="none">
           <path d="M0,24 C275,48 825,0 1100,24 L1100,48 L0,48 Z" fill="#F5F0E8"/>
@@ -42,8 +40,8 @@ export default function Nosotros() {
       </div>
 
       {/* Grid del equipo — solo GIF con nombre */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '48px 28px 72px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(24px, 4vw, 48px) clamp(16px, 4vw, 28px) 72px' }}>
+        <div className='cr-equipo-nosotros' style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
           {EQUIPO.map(persona => (
             <div
               key={persona.id}

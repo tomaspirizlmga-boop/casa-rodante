@@ -2,10 +2,10 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export const CATEGORIAS = {
-  noticias:   { label: 'Noticias', sub: 'La vuelta al mundo', color: 'var(--azul)', img: '/ilustraciones/noticias.png' },
-  columna:    { label: 'Columna',  sub: 'La Ventana',         color: 'var(--naranja)', img: '/ilustraciones/ventana.png' },
-  entrevista: { label: 'Entrevista', sub: 'El Pasajero',      color: 'var(--azul)', img: '/ilustraciones/pasajero.png' },
-  informe:    { label: 'Informe',  sub: 'El Campamento',      color: '#1a1a2e', img: '/ilustraciones/campamento.png' },
+  noticias:   { label: 'Noticias',   sub: 'La vuelta al mundo', color: 'var(--azul)' },
+  columna:    { label: 'Columna',    sub: 'La Ventana',         color: 'var(--naranja)' },
+  entrevista: { label: 'Entrevista', sub: 'El Pasajero',        color: 'var(--azul)' },
+  informe:    { label: 'Informe',    sub: 'El Campamento',      color: '#1a1a2e' },
 }
 
 export default function NotaCard({ nota, featured = false }) {
@@ -44,11 +44,10 @@ export default function NotaCard({ nota, featured = false }) {
             </span>
           </div>
         </div>
-        {/* Imagen de portada o ilustración */}
         <div style={{ position: 'relative', overflow: 'hidden', background: '#0f3aad', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           {nota.foto_url
             ? <img src={nota.foto_url} alt={nota.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            : <img src={cat.img} alt={cat.sub} style={{ width: '95%', opacity: 0.9, filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.3))', mixBlendMode: 'multiply' }} />
+            : <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 40, color: 'rgba(255,255,255,0.08)', textAlign: 'center', padding: 20, lineHeight: 1.3 }}>{cat.sub}</div>
           }
         </div>
       </div>
@@ -62,10 +61,10 @@ export default function NotaCard({ nota, featured = false }) {
       onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.1)' }}
       onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)' }}
     >
-      <div style={{ height: 140, background: cat.color, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ height: 140, background: nota.foto_url ? 'transparent' : cat.color, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {nota.foto_url
           ? <img src={nota.foto_url} alt={nota.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
-          : <img src={cat.img} alt={cat.sub} style={{ width: '95%', opacity: 0.92, filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.25))', mixBlendMode: 'multiply', position: 'relative', zIndex: 1 }} />
+          : <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 18, color: 'rgba(255,255,255,0.15)', textAlign: 'center', padding: 16 }}>{cat.sub}</div>
         }
         <div style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(255,255,255,0.93)', color: cat.color, fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 12, textTransform: 'uppercase', letterSpacing: 0.3, zIndex: 2 }}>
           {cat.label}

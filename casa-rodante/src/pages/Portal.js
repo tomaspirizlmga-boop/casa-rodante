@@ -5,10 +5,10 @@ import NotaCard from '../components/public/NotaCard'
 import { getNotes } from '../lib/supabase'
 
 const SECCIONES_PRESENTACION = [
-  { val: 'entrevista', nombre: 'El Pasajero',      tipo: 'Entrevista',  desc: 'El que sube a la casa rodante por un rato. Conversaciones con personas que tienen algo para contar.', color: 'var(--azul)',    img: '/ilustraciones/pasajero.png' },
-  { val: 'noticias',   nombre: 'La vuelta al mundo',tipo: 'Noticias',    desc: 'Lo que pasó en el planeta, contado desde acá. Sin filtros, con perspectiva.',                          color: 'var(--azul)',    img: '/ilustraciones/noticias.png' },
-  { val: 'columna',    nombre: 'La Ventana',        tipo: 'Columna',     desc: 'El punto de vista personal de uno de los tripulantes. Opinión que no pide permiso.',                    color: 'var(--naranja)', img: '/ilustraciones/ventana.png' },
-  { val: 'informe',    nombre: 'El Campamento',     tipo: 'Informe',     desc: 'Cuando la casa rodante para y se instala en un lugar a explorar de verdad.',                           color: '#1a1a2e',        img: '/ilustraciones/campamento.png' },
+  { val: 'entrevista', nombre: 'El Pasajero',      tipo: 'Entrevista',  desc: 'El que sube a la casa rodante por un rato. Conversaciones con personas que tienen algo para contar.', color: 'var(--azul)',    icon: '🎙️' },
+  { val: 'noticias',   nombre: 'La vuelta al mundo',tipo: 'Noticias',    desc: 'Lo que pasó en el planeta, contado desde acá. Sin filtros, con perspectiva.',                          color: 'var(--azul)',    icon: '🌍' },
+  { val: 'columna',    nombre: 'La Ventana',        tipo: 'Columna',     desc: 'El punto de vista personal de uno de los tripulantes. Opinión que no pide permiso.',                    color: 'var(--naranja)', icon: '✍️' },
+  { val: 'informe',    nombre: 'El Campamento',     tipo: 'Informe',     desc: 'Cuando la casa rodante para y se instala en un lugar a explorar de verdad.',                           color: '#1a1a2e',        icon: '🗺️' },
 ]
 
 function SectionTitle({ label }) {
@@ -39,7 +39,7 @@ function EquipoPreview() {
           </div>
           <Link to="/nosotros" style={{ fontSize: 13, fontWeight: 700, color: 'var(--azul)', textDecoration: 'none' }}>Ver todos →</Link>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
+        <div className='cr-equipo-grid' style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
           {preview.map(p => (
             <Link to="/nosotros" key={p.id} style={{ textDecoration: 'none' }}>
               <div
@@ -68,8 +68,6 @@ function EmptyState() {
         <div style={{ position: 'relative', maxWidth: 560, margin: '0 auto' }}>
           <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 13, color: 'var(--naranja)', marginBottom: 4 }}>casa</div>
           <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 52, color: '#fff', lineHeight: 1, marginBottom: 16 }}>rodante</div>
-          {/* Furgoneta */}
-          <img src="/ilustraciones/casa-rodante.png" alt="Casa Rodante" style={{ width: 380, margin: '0 0 20px -60px', filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.35))', mixBlendMode: 'multiply' }} />
           <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 16, lineHeight: 1.7, fontStyle: 'italic', marginBottom: 28 }}>
             nos hace bien ser diferentes
           </p>
@@ -86,17 +84,16 @@ function EmptyState() {
 
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '48px 28px 32px' }}>
         <SectionTitle label="Qué vas a encontrar acá" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 48 }}>
+        <div className='cr-secciones-grid' style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 48 }}>
           {SECCIONES_PRESENTACION.map(s => (
             <div key={s.val} style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--borde)', padding: '24px 26px', display: 'flex', gap: 20, alignItems: 'center' }}>
               <div style={{ width: 100, height: 100, borderRadius: 12, background: s.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <img src={s.img} alt={s.nombre} style={{ width: 100, height: 100, objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))', mixBlendMode: 'multiply' }} />
+                <img src={s.img} alt={s.nombre} style={{ width: 100, height: 100, objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} />
               </div>
               <div>
                 <div style={{ fontSize: 10, fontWeight: 700, color: s.color, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 3 }}>{s.tipo}</div>
                 <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 17, color: 'var(--texto)', marginBottom: 5 }}>{s.nombre}</div>
                 <p style={{ fontSize: 13, color: 'var(--texto-suave)', lineHeight: 1.6 }}>{s.desc}</p>
-              </div>
             </div>
           ))}
         </div>
@@ -138,12 +135,12 @@ export default function Portal() {
       ) : notas.length === 0 ? (
         <EmptyState />
       ) : (
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '36px 28px 64px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(16px, 4vw, 36px) clamp(16px, 4vw, 28px) 64px' }}>
           {featured && <NotaCard nota={featured} featured />}
           {rest.length > 0 && (
             <>
               <SectionTitle label="Últimas notas" />
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18, marginBottom: 40 }}>
+              <div className='cr-grid-notas' style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18, marginBottom: 40 }}>
                 {rest.map(n => <NotaCard key={n.id} nota={n} />)}
               </div>
             </>
@@ -162,9 +159,8 @@ export default function Portal() {
 
       <footer style={{ background: 'var(--sidebar)', padding: '48px 28px 28px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 36 }}>
+          <div className='cr-footer-inner' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 36 }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20 }}>
-              <img src="/ilustraciones/casa-rodante.png" alt="Casa Rodante" style={{ width: 160, filter: 'brightness(0.9)', mixBlendMode: 'multiply' }} />
               <div>
                 <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 12, color: 'var(--naranja)', lineHeight: 1 }}>casa</div>
                 <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 26, color: '#fff', lineHeight: 1, marginTop: 2, marginBottom: 8 }}>rodante</div>
