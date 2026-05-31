@@ -94,6 +94,7 @@ function EmptyState() {
                 <div style={{ fontSize: 10, fontWeight: 700, color: s.color, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 3 }}>{s.tipo}</div>
                 <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 17, color: 'var(--texto)', marginBottom: 5 }}>{s.nombre}</div>
                 <p style={{ fontSize: 13, color: 'var(--texto-suave)', lineHeight: 1.6 }}>{s.desc}</p>
+              </div>
             </div>
           ))}
         </div>
