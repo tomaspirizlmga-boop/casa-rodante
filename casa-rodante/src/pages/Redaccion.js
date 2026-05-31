@@ -58,9 +58,14 @@ export default function Redaccion({ session }) {
       }
       if (result.error) throw result.error
 
-      if (fotoFile && result.data?.id) {
-        const url = await uploadFoto(fotoFile, result.data.id)
-        await updateNote(result.data.id, { foto_url: url })
+      const notaId = result.data?.id || editId
+      if (fotoFile && notaId) {
+        try {
+          const url = await uploadFoto(fotoFile, notaId)
+          await updateNote(notaId, { foto_url: url })
+        } catch (uploadErr) {
+          console.error('Error subiendo foto:', uploadErr)
+        }
       }
 
       setMsg(publicar ? '¡Nota publicada!' : 'Borrador guardado.')
