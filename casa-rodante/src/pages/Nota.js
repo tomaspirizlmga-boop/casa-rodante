@@ -62,7 +62,8 @@ export default function Nota() {
           color: #2a2a2a;
         }
         .nota-cuerpo p { margin-bottom: 1.2em; }
-        .nota-cuerpo br { display: block; content: ""; margin-top: 0.5em; }
+        .nota-cuerpo div { margin-bottom: 0.8em; }
+        .nota-cuerpo br { display: block; content: ""; margin-top: 0.4em; }
         .nota-cuerpo blockquote {
           border-left: 3px solid var(--naranja, #F07A2A);
           padding: 12px 20px;

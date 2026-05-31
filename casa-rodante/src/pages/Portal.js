@@ -152,7 +152,7 @@ export default function Portal() {
           {featured && <NotaCard nota={featured} featured />}
           {rest.length > 0 && (
             <>
-              <SectionTitle label="Últimas notas" />
+              <SectionTitle label="Últimas publicaciones" />
               <div className='cr-grid-notas' style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18, marginBottom: 40 }}>
                 {rest.map(n => <NotaCard key={n.id} nota={n} />)}
               </div>

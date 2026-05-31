@@ -19,24 +19,28 @@ const emptyForm = {
 
 function RichEditor({ value, onChange }) {
   const editorRef = useRef(null)
-  const isInitialized = useRef(false)
+  const lastValueRef = useRef(null)
 
+  // Load content whenever value changes externally (new note, edit note, clear form)
   useEffect(() => {
-    if (editorRef.current && !isInitialized.current) {
-      editorRef.current.innerHTML = value || ''
-      isInitialized.current = true
-    }
-  }, [])
-
-  // When value changes externally (e.g. loading a note), update content
-  useEffect(() => {
-    if (editorRef.current && value !== undefined) {
-      const current = editorRef.current.innerHTML
-      if (current !== value && !editorRef.current.contains(document.activeElement)) {
+    if (editorRef.current && value !== lastValueRef.current) {
+      const active = document.activeElement
+      const hasFocus = editorRef.current === active || editorRef.current.contains(active)
+      if (!hasFocus) {
         editorRef.current.innerHTML = value || ''
+        lastValueRef.current = value
       }
     }
   }, [value])
+
+  // On mount, set initial content
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.innerHTML = value || ''
+      lastValueRef.current = value
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const exec = (cmd, val = null) => {
     editorRef.current.focus()
@@ -45,7 +49,9 @@ function RichEditor({ value, onChange }) {
   }
 
   const handleInput = () => {
-    onChange(editorRef.current.innerHTML)
+    const html = editorRef.current.innerHTML
+    lastValueRef.current = html
+    onChange(html)
   }
 
   const insertBlockquote = () => {
@@ -192,11 +198,18 @@ export default function Redaccion({ session }) {
     const idx = sorted.findIndex(n => n.id === nota.id)
     const swapIdx = idx + dir
     if (swapIdx < 0 || swapIdx >= sorted.length) return
-    // Normalize all positions first, then swap the two
+    // Normalize positions 0,1,2... then swap the two
     const updates = sorted.map((n, i) => ({ id: n.id, orden: i }))
     const temp = updates[idx].orden
     updates[idx].orden = updates[swapIdx].orden
     updates[swapIdx].orden = temp
+    // Update local state immediately so UI responds without waiting for DB
+    const newNotas = notas.map(n => {
+      const u = updates.find(x => x.id === n.id)
+      return u ? { ...n, orden: u.orden } : n
+    })
+    setNotas(newNotas)
+    // Persist to DB (fire and forget, then reload to confirm)
     await Promise.all(updates.map(u => updateNote(u.id, { orden: u.orden })))
     loadNotas()
   }
