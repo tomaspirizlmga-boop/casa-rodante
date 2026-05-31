@@ -208,9 +208,8 @@ export default function Redaccion({ session }) {
       return u ? { ...n, orden: u.orden } : n
     })
     setNotas(newNotas)
-    // Persist to DB (fire and forget, then reload to confirm)
+    // Persist to DB — no loadNotas() after, to avoid overwriting local state before DB settles
     await Promise.all(updates.map(u => updateNote(u.id, { orden: u.orden })))
-    loadNotas()
   }
 
   const userEmail = session?.user?.email || ''
