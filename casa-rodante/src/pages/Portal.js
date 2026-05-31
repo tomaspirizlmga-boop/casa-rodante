@@ -143,7 +143,7 @@ export default function Portal() {
         <img
           src="/portada.gif"
           alt="Casa Rodante"
-          style={{ width: '100%', display: 'block', maxHeight: 520, objectFit: 'cover', objectPosition: 'center top' }}
+          style={{ width: '100%', display: 'block', objectFit: 'contain' }}
         />
       </div>
 
