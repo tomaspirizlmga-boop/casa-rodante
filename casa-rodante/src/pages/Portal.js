@@ -69,7 +69,7 @@ function EmptyState() {
           <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 13, color: 'var(--naranja)', marginBottom: 4 }}>casa</div>
           <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 52, color: '#fff', lineHeight: 1, marginBottom: 16 }}>rodante</div>
           {/* Furgoneta */}
-          <img src="/ilustraciones/casa-rodante.png" alt="Casa Rodante" style={{ width: 200, margin: '0 auto 20px', filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.35))' }} />
+          <img src="/ilustraciones/casa-rodante.png" alt="Casa Rodante" style={{ width: 260, margin: '0 auto 20px', filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.35))' }} />
           <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 16, lineHeight: 1.7, fontStyle: 'italic', marginBottom: 28 }}>
             nos hace bien ser diferentes
           </p>
@@ -90,7 +90,7 @@ function EmptyState() {
           {SECCIONES_PRESENTACION.map(s => (
             <div key={s.val} style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--borde)', padding: '24px 26px', display: 'flex', gap: 20, alignItems: 'center' }}>
               <div style={{ width: 72, height: 72, borderRadius: 12, background: s.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <img src={s.img} alt={s.nombre} style={{ width: 52, height: 52, objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} />
+                <img src={s.img} alt={s.nombre} style={{ width: 72, height: 72, objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} />
               </div>
               <div>
                 <div style={{ fontSize: 10, fontWeight: 700, color: s.color, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 3 }}>{s.tipo}</div>
@@ -164,7 +164,7 @@ export default function Portal() {
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 36 }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20 }}>
-              <img src="/ilustraciones/casa-rodante.png" alt="Casa Rodante" style={{ width: 80, filter: 'brightness(0.9)' }} />
+              <img src="/ilustraciones/casa-rodante.png" alt="Casa Rodante" style={{ width: 110, filter: 'brightness(0.9)' }} />
               <div>
                 <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 12, color: 'var(--naranja)', lineHeight: 1 }}>casa</div>
                 <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 26, color: '#fff', lineHeight: 1, marginTop: 2, marginBottom: 8 }}>rodante</div>
