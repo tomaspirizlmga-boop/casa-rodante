@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop'
+import 'react-image-crop/dist/ReactCrop.css'
 import { useNavigate } from 'react-router-dom'
 import { getAllNotes, createNote, updateNote, deleteNote, uploadFoto, uploadInlineImage, signOut } from '../lib/supabase'
 
@@ -147,12 +149,11 @@ function RichEditor({ value, onChange, notaId }) {
 }
 
 function CropModal({ file, onConfirm, onCancel }) {
-  const canvasRef = useRef(null)
-  const imgRef = useRef(null)
   const [imgSrc, setImgSrc] = useState(null)
-  const [crop, setCrop] = useState({ x: 0, y: 0, w: 0, h: 0 })
-  const [dragging, setDragging] = useState(null)
-  const [imgNatural, setImgNatural] = useState({ w: 1, h: 1 })
+  const [crop, setCrop] = useState()
+  const [completedCrop, setCompletedCrop] = useState()
+  const imgRef = useRef(null)
+  const ASPECT = 16 / 9
 
   useEffect(() => {
     const reader = new FileReader()
@@ -160,72 +161,52 @@ function CropModal({ file, onConfirm, onCancel }) {
     reader.readAsDataURL(file)
   }, [file])
 
-  const onImgLoad = (e) => {
-    const img = e.target
-    const maxW = 520
-    const scale = img.naturalWidth > maxW ? maxW / img.naturalWidth : 1
-    const dw = Math.round(img.naturalWidth * scale)
-    const dh = Math.round(img.naturalHeight * scale)
-    img.width = dw; img.height = dh
-    setImgNatural({ w: img.naturalWidth, h: img.naturalHeight, dw, dh, scale })
-    setCrop({ x: 0, y: 0, w: dw, h: dh })
+  const onImageLoad = (e) => {
+    const { naturalWidth: width, naturalHeight: height } = e.currentTarget
+    const c = centerCrop(
+      makeAspectCrop({ unit: '%', width: 90 }, ASPECT, width, height),
+      width, height
+    )
+    setCrop(c)
   }
 
-  const getPos = (e) => {
-    const rect = imgRef.current.getBoundingClientRect()
-    return { x: (e.clientX || e.touches?.[0]?.clientX) - rect.left, y: (e.clientY || e.touches?.[0]?.clientY) - rect.top }
-  }
-
-  const onMouseDown = (e) => {
-    e.preventDefault()
-    const p = getPos(e)
-    setDragging({ startX: p.x, startY: p.y, origCrop: { ...crop } })
-  }
-
-  const onMouseMove = (e) => {
-    if (!dragging) return
-    const p = getPos(e)
-    const dx = p.x - dragging.startX, dy = p.y - dragging.startY
-    const { dw, dh } = imgNatural
-    setCrop(c => ({
-      x: Math.max(0, Math.min(dw - c.w, dragging.origCrop.x + dx)),
-      y: Math.max(0, Math.min(dh - c.h, dragging.origCrop.y + dy)),
-      w: c.w, h: c.h,
-    }))
-  }
-
-  const handleConfirm = () => {
+  const handleConfirm = useCallback(() => {
+    if (!completedCrop || !imgRef.current) return
     const canvas = document.createElement('canvas')
-    const { w, h, scale } = imgNatural
-    const scaleX = imgNatural.w / (imgNatural.dw || 1)
-    const scaleY = imgNatural.h / (imgNatural.dh || 1)
-    canvas.width = Math.round(crop.w * scaleX)
-    canvas.height = Math.round(crop.h * scaleY)
+    const img = imgRef.current
+    const scaleX = img.naturalWidth / img.width
+    const scaleY = img.naturalHeight / img.height
+    canvas.width = Math.round(completedCrop.width * scaleX)
+    canvas.height = Math.round(completedCrop.height * scaleY)
     const ctx = canvas.getContext('2d')
-    ctx.drawImage(imgRef.current, crop.x * scaleX, crop.y * scaleY, crop.w * scaleX, crop.h * scaleY, 0, 0, canvas.width, canvas.height)
+    ctx.drawImage(
+      img,
+      completedCrop.x * scaleX, completedCrop.y * scaleY,
+      completedCrop.width * scaleX, completedCrop.height * scaleY,
+      0, 0, canvas.width, canvas.height
+    )
     canvas.toBlob(blob => {
-      const croppedFile = new File([blob], file.name, { type: 'image/jpeg' })
-      onConfirm(croppedFile)
+      onConfirm(new File([blob], file.name, { type: 'image/jpeg' }))
     }, 'image/jpeg', 0.92)
-  }
+  }, [completedCrop, file.name, onConfirm])
 
   if (!imgSrc) return null
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ background: '#fff', borderRadius: 14, padding: 24, maxWidth: 580, width: '90%' }}>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <div style={{ background: '#fff', borderRadius: 14, padding: 24, maxWidth: 620, width: '100%' }}>
         <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Recortar foto de portada</div>
-        <div style={{ fontSize: 12, color: '#888', marginBottom: 14 }}>Arrastrá la imagen para elegir qué parte mostrar</div>
-        <div style={{ position: 'relative', display: 'inline-block', cursor: 'move', userSelect: 'none', maxWidth: '100%' }}
-          onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={() => setDragging(null)} onMouseLeave={() => setDragging(null)}>
-          <img ref={imgRef} src={imgSrc} alt="crop" onLoad={onImgLoad} style={{ display: 'block', borderRadius: 8 }} draggable={false} />
-          {imgNatural.dw && (
-            <div style={{
-              position: 'absolute', border: '2px solid #1B4FD8', borderRadius: 4, pointerEvents: 'none',
-              left: crop.x, top: crop.y, width: crop.w, height: crop.h,
-              boxShadow: '0 0 0 9999px rgba(0,0,0,0.45)',
-            }} />
-          )}
+        <div style={{ fontSize: 12, color: '#888', marginBottom: 16 }}>Arrastrá el recuadro y ajustá las esquinas para elegir el área (proporción 16:9)</div>
+        <div style={{ maxHeight: '60vh', overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
+          <ReactCrop
+            crop={crop}
+            onChange={c => setCrop(c)}
+            onComplete={c => setCompletedCrop(c)}
+            aspect={ASPECT}
+            minWidth={80}
+          >
+            <img ref={imgRef} src={imgSrc} alt="recortar" onLoad={onImageLoad} style={{ maxWidth: '100%', maxHeight: '55vh' }} />
+          </ReactCrop>
         </div>
         <div style={{ marginTop: 16, display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
           <button onClick={onCancel} style={{ padding: '8px 20px', borderRadius: 8, border: '1px solid #ddd', background: '#fff', cursor: 'pointer', fontSize: 13 }}>Cancelar</button>
@@ -235,6 +216,7 @@ function CropModal({ file, onConfirm, onCancel }) {
     </div>
   )
 }
+
 
 export default function Redaccion({ session }) {
   const navigate = useNavigate()
