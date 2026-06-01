@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { supabase } from './lib/supabase'
 
 import Portal from './pages/Portal'
+import ListadoNotas from './pages/ListadoNotas'
 import Nota from './pages/Nota'
 import Login from './pages/Login'
 import Redaccion from './pages/Redaccion'
@@ -26,6 +27,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Portal />} />
+      <Route path="/notas" element={<ListadoNotas />} />
       <Route path="/nota/:id" element={<Nota />} />
       <Route path="/nosotros" element={<Nosotros />} />
       <Route path="/redaccion/login" element={<Login session={session} />} />
