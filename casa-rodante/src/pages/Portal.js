@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/public/Navbar'
 import NotaCard from '../components/public/NotaCard'
-import { getNotes } from '../lib/supabase'
+import { getNotes, getProgramas } from '../lib/supabase'
 
 const SECCIONES_PRESENTACION = [
   { val: 'entrevista', nombre: 'El Pasajero',      tipo: 'Entrevista',  desc: 'El que sube a la casa rodante por un rato. Conversaciones con personas que tienen algo para contar.', color: 'var(--azul)',    icon: '🎙️' },
@@ -10,6 +10,12 @@ const SECCIONES_PRESENTACION = [
   { val: 'columna',    nombre: 'La Ventana',        tipo: 'Columna',     desc: 'El punto de vista personal de uno de los tripulantes. Opinión que no pide permiso.',                    color: 'var(--naranja)', icon: '✍️' },
   { val: 'informe',    nombre: 'El Campamento',     tipo: 'Informe',     desc: 'Cuando la casa rodante para y se instala en un lugar a explorar de verdad.',                           color: '#1a1a2e',        icon: '🗺️' },
 ]
+
+function getYouTubeId(url) {
+  if (!url) return null
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/\s]{11})/)
+  return m ? m[1] : null
+}
 
 function SectionTitle({ label }) {
   return (
@@ -114,9 +120,71 @@ function EmptyState() {
   )
 }
 
+function ProgramasPreview({ programas }) {
+  if (!programas || programas.length === 0) return null
+  return (
+    <div style={{ background: 'var(--sidebar)', padding: '48px 28px' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--naranja)', textTransform: 'uppercase', letterSpacing: 1.5 }}>Últimos programas</span>
+            <div style={{ width: 40, height: 1, background: 'rgba(255,255,255,0.15)' }} />
+          </div>
+          <Link to="/programas" style={{ fontSize: 13, fontWeight: 700, color: 'var(--naranja)', textDecoration: 'none' }}>Ver todos →</Link>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }}>
+          {programas.map(p => {
+            const ytId = getYouTubeId(p.url)
+            return (
+              <a
+                key={p.id}
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none', display: 'block', background: 'rgba(255,255,255,0.06)', borderRadius: 12, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', transition: 'transform 0.2s, background 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)' }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+              >
+                {/* Thumbnail */}
+                <div style={{ position: 'relative', aspectRatio: '16/9', background: '#111', overflow: 'hidden' }}>
+                  {ytId ? (
+                    <img
+                      src={`https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`}
+                      alt={p.titulo}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={e => { e.target.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` }}
+                    />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontSize: 32 }}>📺</span>
+                    </div>
+                  )}
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)' }}>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(240,122,42,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                  </div>
+                </div>
+                {/* Info */}
+                <div style={{ padding: '12px 14px' }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.4, marginBottom: 4 }}>{p.titulo}</div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
+                    {p.fecha ? new Date(p.fecha + 'T12:00:00').toLocaleDateString('es-UY', { day: 'numeric', month: 'long' }) : ''}
+                  </div>
+                </div>
+              </a>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Portal() {
   const [categoria, setCategoria] = useState('todas')
   const [notas, setNotas] = useState([])
+  const [programas, setProgramas] = useState([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
@@ -126,8 +194,12 @@ export default function Portal() {
 
   useEffect(() => {
     setLoading(true)
-    getNotes({ categoria, page, pageSize: PAGE_SIZE }).then(({ data, count, error }) => {
-      if (!error) { setNotas(data || []); setTotal(count || 0) }
+    Promise.all([
+      getNotes({ categoria, page, pageSize: PAGE_SIZE }),
+      getProgramas({ limit: 3 }),
+    ]).then(([notasRes, programasRes]) => {
+      if (!notasRes.error) { setNotas(notasRes.data || []); setTotal(notasRes.count || 0) }
+      if (!programasRes.error) setProgramas(programasRes.data || [])
       setLoading(false)
     })
   }, [categoria, page])
@@ -164,6 +236,9 @@ export default function Portal() {
           </div>
         </div>
       )}
+
+      {/* Últimos programas */}
+      <ProgramasPreview programas={programas} />
 
       <EquipoPreview />
 

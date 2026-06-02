@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 import { useNavigate } from 'react-router-dom'
-import { getAllNotes, createNote, updateNote, deleteNote, uploadFoto, uploadInlineImage, signOut } from '../lib/supabase'
+import { getAllNotes, createNote, updateNote, deleteNote, uploadFoto, uploadInlineImage, signOut, getProgramas, createPrograma, updatePrograma, deletePrograma } from '../lib/supabase'
 
 const CATEGORIAS = [
   { val: 'noticias',   label: 'Noticias · La vuelta al mundo' },
@@ -224,8 +224,15 @@ export default function Redaccion({ session }) {
   const [msg, setMsg] = useState('')
   const [cropFile, setCropFile] = useState(null)
 
+  const [programas, setProgramas] = useState([])
+  const [progForm, setProgForm] = useState({ titulo: '', url: '', fecha: new Date().toISOString().split('T')[0], descripcion: '' })
+  const [editProgId, setEditProgId] = useState(null)
+  const [savingProg, setSavingProg] = useState(false)
+  const [msgProg, setMsgProg] = useState('')
+
   const loadNotas = () => getAllNotes().then(({ data }) => setNotas(data || []))
-  useEffect(() => { loadNotas() }, [])
+  const loadProgramas = () => getProgramas().then(({ data }) => setProgramas(data || []))
+  useEffect(() => { loadNotas(); loadProgramas() }, [])
 
   const handleSalir = async () => { await signOut(); navigate('/redaccion/login') }
 
@@ -314,7 +321,7 @@ export default function Redaccion({ session }) {
         </div>
         <div style={{ padding: '12px 0', flex: 1 }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: 1, padding: '0 20px', marginBottom: 6 }}>Redacción</div>
-          {[{ id: 'nueva', icon: '✏️', label: 'Nueva nota' }, { id: 'notas', icon: '📄', label: 'Mis notas' }].map(item => (
+          {[{ id: 'nueva', icon: '✏️', label: 'Nueva nota' }, { id: 'notas', icon: '📄', label: 'Mis notas' }, { id: 'programas', icon: '📺', label: 'Programas' }].map(item => (
             <button key={item.id}
               onClick={() => { setSeccion(item.id); if (item.id === 'nueva') { setForm(emptyForm); setEditId(null) } }}
               style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 20px', background: seccion === item.id ? 'rgba(27,79,216,0.35)' : 'none', border: 'none', borderLeft: `2px solid ${seccion === item.id ? 'var(--naranja)' : 'transparent'}`, color: seccion === item.id ? '#fff' : 'rgba(255,255,255,0.6)', fontSize: 13, textAlign: 'left', transition: 'all 0.15s' }}>
@@ -442,6 +449,86 @@ export default function Redaccion({ session }) {
                   <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                     <button onClick={() => handleEdit(nota)} style={{ background: 'none', border: '1px solid var(--azul)', color: 'var(--azul)', borderRadius: 6, padding: '4px 10px', fontSize: 11 }}>Editar</button>
                     <button onClick={() => handleDelete(nota.id)} style={{ background: 'none', border: '1px solid #fcc', color: '#c00', borderRadius: 6, padding: '4px 10px', fontSize: 11 }}>Eliminar</button>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        )}
+        {seccion === 'programas' && (
+          <div style={{ maxWidth: 780, margin: '0 auto', padding: '28px 32px' }}>
+            <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 20 }}>Programas</h2>
+
+            {/* Form */}
+            <div style={{ background: '#fff', borderRadius: 10, border: '1px solid var(--borde)', padding: '20px 24px', marginBottom: 24 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 14, color: 'var(--azul)' }}>{editProgId ? 'Editar programa' : 'Agregar programa'}</div>
+              {msgProg && <div style={{ background: msgProg.includes('Error') ? '#fee' : '#efe', border: `1px solid ${msgProg.includes('Error') ? '#fcc' : '#cfc'}`, borderRadius: 8, padding: '8px 14px', marginBottom: 12, fontSize: 13 }}>{msgProg}</div>}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 5 }}>Título</label>
+                  <input value={progForm.titulo} onChange={e => setProgForm(f => ({ ...f, titulo: e.target.value }))}
+                    placeholder="Ej: Programa #12 — Semana política"
+                    style={{ width: '100%', background: '#fafafa', border: '1px solid var(--borde)', borderRadius: 8, padding: '9px 12px', fontSize: 13 }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 5 }}>Fecha</label>
+                  <input type="date" value={progForm.fecha} onChange={e => setProgForm(f => ({ ...f, fecha: e.target.value }))}
+                    style={{ width: '100%', background: '#fafafa', border: '1px solid var(--borde)', borderRadius: 8, padding: '9px 12px', fontSize: 13 }} />
+                </div>
+              </div>
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 5 }}>Link de YouTube</label>
+                <input value={progForm.url} onChange={e => setProgForm(f => ({ ...f, url: e.target.value }))}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  style={{ width: '100%', background: '#fafafa', border: '1px solid var(--borde)', borderRadius: 8, padding: '9px 12px', fontSize: 13 }} />
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 5 }}>Descripción breve (opcional)</label>
+                <input value={progForm.descripcion} onChange={e => setProgForm(f => ({ ...f, descripcion: e.target.value }))}
+                  placeholder="Ej: Entrevista con el intendente + análisis del presupuesto"
+                  style={{ width: '100%', background: '#fafafa', border: '1px solid var(--borde)', borderRadius: 8, padding: '9px 12px', fontSize: 13 }} />
+              </div>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                {editProgId && (
+                  <button onClick={() => { setEditProgId(null); setProgForm({ titulo: '', url: '', fecha: new Date().toISOString().split('T')[0], descripcion: '' }) }}
+                    style={{ background: '#fff', border: '1px solid var(--borde)', borderRadius: 8, padding: '7px 16px', fontSize: 13 }}>Cancelar</button>
+                )}
+                <button disabled={savingProg} onClick={async () => {
+                  if (!progForm.titulo || !progForm.url) { setMsgProg('Completá título y link.'); return }
+                  setSavingProg(true); setMsgProg('')
+                  try {
+                    if (editProgId) await updatePrograma(editProgId, progForm)
+                    else await createPrograma(progForm)
+                    setProgForm({ titulo: '', url: '', fecha: new Date().toISOString().split('T')[0], descripcion: '' })
+                    setEditProgId(null)
+                    loadProgramas()
+                    setMsgProg('¡Guardado!')
+                    setTimeout(() => setMsgProg(''), 2000)
+                  } catch (e) { setMsgProg('Error: ' + e.message) }
+                  setSavingProg(false)
+                }} style={{ background: 'var(--azul)', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 18px', fontSize: 13, fontWeight: 700 }}>
+                  {savingProg ? 'Guardando...' : editProgId ? 'Actualizar' : '+ Agregar'}
+                </button>
+              </div>
+            </div>
+
+            {/* Lista */}
+            {programas.length === 0
+              ? <p style={{ color: 'var(--texto-suave)', fontSize: 14 }}>No hay programas cargados todavía.</p>
+              : programas.map(p => (
+                <div key={p.id} style={{ background: '#fff', borderRadius: 10, border: '1px solid var(--borde)', padding: '12px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span style={{ fontSize: 20 }}>📺</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.titulo}</div>
+                    <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>
+                      {p.fecha ? new Date(p.fecha + 'T12:00:00').toLocaleDateString('es-UY') : ''} · <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--azul)' }}>ver en YouTube</a>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                    <button onClick={() => { setEditProgId(p.id); setProgForm({ titulo: p.titulo || '', url: p.url || '', fecha: p.fecha || new Date().toISOString().split('T')[0], descripcion: p.descripcion || '' }) }}
+                      style={{ background: 'none', border: '1px solid var(--azul)', color: 'var(--azul)', borderRadius: 6, padding: '4px 10px', fontSize: 11 }}>Editar</button>
+                    <button onClick={async () => { if (window.confirm('¿Eliminar?')) { await deletePrograma(p.id); loadProgramas() } }}
+                      style={{ background: 'none', border: '1px solid #fcc', color: '#c00', borderRadius: 6, padding: '4px 10px', fontSize: 11 }}>Eliminar</button>
                   </div>
                 </div>
               ))

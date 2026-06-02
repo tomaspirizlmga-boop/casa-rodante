@@ -56,3 +56,23 @@ export const uploadInlineImage = async (file, notaId) => {
   const { data } = supabase.storage.from('fotos').getPublicUrl(path)
   return data.publicUrl
 }
+
+// — Programas —
+
+export const getProgramas = async ({ limit } = {}) => {
+  let query = supabase
+    .from('programas')
+    .select('*')
+    .order('fecha', { ascending: false })
+  if (limit) query = query.limit(limit)
+  return query
+}
+
+export const createPrograma = async (programa) =>
+  supabase.from('programas').insert([programa]).select().single()
+
+export const updatePrograma = async (id, programa) =>
+  supabase.from('programas').update(programa).eq('id', id).select().single()
+
+export const deletePrograma = async (id) =>
+  supabase.from('programas').delete().eq('id', id)

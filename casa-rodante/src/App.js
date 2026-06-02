@@ -8,6 +8,7 @@ import Nota from './pages/Nota'
 import Login from './pages/Login'
 import Redaccion from './pages/Redaccion'
 import Nosotros from './pages/Nosotros'
+import Programas from './pages/Programas'
 
 function PrivateRoute({ session, children }) {
   if (session === null) return <Navigate to="/redaccion/login" replace />
@@ -30,6 +31,7 @@ export default function App() {
       <Route path="/notas" element={<ListadoNotas />} />
       <Route path="/nota/:id" element={<Nota />} />
       <Route path="/nosotros" element={<Nosotros />} />
+      <Route path="/programas" element={<Programas />} />
       <Route path="/redaccion/login" element={<Login session={session} />} />
       <Route path="/redaccion" element={
         <PrivateRoute session={session}>
