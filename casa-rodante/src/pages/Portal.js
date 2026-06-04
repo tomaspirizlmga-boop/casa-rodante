@@ -117,8 +117,8 @@ function EmptyState() {
 function ProgramasPreview({ programas }) {
   if (!programas || programas.length === 0) return null
   return (
-    <div style={{ background: 'var(--sidebar)', padding: '48px 28px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <div style={{ background: 'var(--sidebar)', padding: '48px clamp(24px, 3vw, 48px)' }}>
+      <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--naranja)', textTransform: 'uppercase', letterSpacing: 1.5 }}>Últimos programas</span>
@@ -218,7 +218,7 @@ export default function Portal() {
       ) : notas.length === 0 ? (
         <EmptyState />
       ) : (
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(16px, 4vw, 36px) clamp(16px, 4vw, 28px) 64px' }}>
+        <div style={{ padding: 'clamp(16px, 4vw, 36px) clamp(24px, 3vw, 48px) 64px' }}>
           <SectionTitle label="Últimas publicaciones" />
           <style>{`
             .cr-grid-notas { grid-template-columns: repeat(5, 1fr) !important; }
