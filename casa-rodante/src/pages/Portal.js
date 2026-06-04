@@ -33,22 +33,33 @@ function EquipoPreview() {
     { id: 3, nombre: 'Magui', bg: '#F07A2A' },
   ]
   return (
-    <div style={{ background: 'var(--crema-dark)', padding: '40px 28px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 40, flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+    <div style={{ background: 'var(--crema-dark)', padding: '56px 28px' }}>
+      <style>{`
+        .cr-grid-notas { grid-template-columns: repeat(5, 1fr) !important; }
+        .cr-grid-programas { grid-template-columns: repeat(5, 1fr) !important; }
+        .cr-equipo-wrap { flex-direction: row; }
+        .cr-equipo-avatars { gap: 0; }
+        .cr-equipo-avatar { width: 110px; height: 110px; margin-left: -22px; }
+        .cr-equipo-avatar:first-child { margin-left: 0; }
+        @media (max-width: 600px) {
+          .cr-grid-notas { grid-template-columns: repeat(3, 1fr) !important; }
+          .cr-grid-programas { grid-template-columns: repeat(3, 1fr) !important; }
+          .cr-equipo-wrap { flex-direction: column; align-items: center; text-align: center; }
+        }
+      `}</style>
+      <div className="cr-equipo-wrap" style={{ maxWidth: 700, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 36 }}>
+        <div className="cr-equipo-avatars" style={{ display: 'flex', alignItems: 'center' }}>
           {conductores.map((p, i) => (
-            <div key={p.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, marginLeft: i > 0 ? -16 : 0, zIndex: conductores.length - i }}>
-              <div style={{ width: 72, height: 72, borderRadius: '50%', overflow: 'hidden', background: p.bg, border: '3px solid var(--crema-dark)', flexShrink: 0 }}>
-                <img src={`/equipo/${p.id}.gif`} alt={p.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
-              </div>
+            <div key={p.id} className="cr-equipo-avatar" style={{ width: 110, height: 110, borderRadius: '50%', overflow: 'hidden', background: p.bg, border: '4px solid var(--crema-dark)', flexShrink: 0, marginLeft: i > 0 ? -22 : 0, zIndex: conductores.length - i }}>
+              <img src={`/equipo/${p.id}.gif`} alt={p.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
             </div>
           ))}
         </div>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--texto)', marginBottom: 4 }}>Manu, Euge y Magui</div>
-          <div style={{ fontSize: 13, color: 'var(--texto-suave)', marginBottom: 14 }}>Los conductores de Casa Rodante</div>
+          <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 22, color: 'var(--texto)', marginBottom: 6 }}>Manu, Euge y Magui</div>
+          <div style={{ fontSize: 14, color: 'var(--texto-suave)', marginBottom: 18, lineHeight: 1.5 }}>Los conductores de Casa Rodante.<br/>Conocelos, su historia y lo que los trajo hasta acá.</div>
           <Link to="/nosotros"
-            style={{ display: 'inline-block', background: 'var(--azul)', color: '#fff', padding: '9px 20px', borderRadius: 24, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+            style={{ display: 'inline-block', background: 'var(--azul)', color: '#fff', padding: '11px 24px', borderRadius: 24, fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>
             Conocé al equipo →
           </Link>
         </div>
@@ -220,14 +231,6 @@ export default function Portal() {
       ) : (
         <div style={{ padding: 'clamp(16px, 4vw, 36px) clamp(24px, 3vw, 48px) 64px' }}>
           <SectionTitle label="Últimas publicaciones" />
-          <style>{`
-            .cr-grid-notas { grid-template-columns: repeat(5, 1fr) !important; }
-            .cr-grid-programas { grid-template-columns: repeat(5, 1fr) !important; }
-            @media (max-width: 768px) {
-              .cr-grid-notas { grid-template-columns: repeat(3, 1fr) !important; }
-              .cr-grid-programas { grid-template-columns: repeat(3, 1fr) !important; }
-            }
-          `}</style>
           <div className='cr-grid-notas' style={{ display: 'grid', gap: 18, marginBottom: 40 }}>
             {notas.slice(0, 5).map(n => <NotaCard key={n.id} nota={n} />)}
           </div>
