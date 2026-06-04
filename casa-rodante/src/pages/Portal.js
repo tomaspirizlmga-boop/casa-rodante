@@ -33,30 +33,24 @@ function EquipoPreview() {
     { id: 3, nombre: 'Magui', bg: '#F07A2A' },
   ]
   return (
-    <div style={{ background: 'var(--crema-dark)', padding: '48px 28px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--azul)', textTransform: 'uppercase', letterSpacing: 1.5 }}>Los conductores</span>
-            <div style={{ width: 40, height: 1, background: 'var(--borde)' }} />
-          </div>
-          <Link to="/nosotros" style={{ fontSize: 13, fontWeight: 700, color: 'var(--azul)', textDecoration: 'none' }}>Ver todos →</Link>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, maxWidth: 600, margin: '0 auto' }}>
-          {conductores.map(p => (
-            <Link to="/nosotros" key={p.id} style={{ textDecoration: 'none' }}>
-              <div
-                style={{ borderRadius: 12, overflow: 'hidden', background: p.bg, aspectRatio: '3/4', position: 'relative', transition: 'transform 0.2s' }}
-                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-              >
+    <div style={{ background: 'var(--crema-dark)', padding: '40px 28px' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 40, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          {conductores.map((p, i) => (
+            <div key={p.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, marginLeft: i > 0 ? -16 : 0, zIndex: conductores.length - i }}>
+              <div style={{ width: 72, height: 72, borderRadius: '50%', overflow: 'hidden', background: p.bg, border: '3px solid var(--crema-dark)', flexShrink: 0 }}>
                 <img src={`/equipo/${p.id}.gif`} alt={p.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.6))', padding: '20px 10px 8px' }}>
-                  <div style={{ fontFamily: 'Pacifico, cursive', fontSize: 14, color: '#fff' }}>{p.nombre}</div>
-                </div>
               </div>
-            </Link>
+            </div>
           ))}
+        </div>
+        <div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--texto)', marginBottom: 4 }}>Manu, Euge y Magui</div>
+          <div style={{ fontSize: 13, color: 'var(--texto-suave)', marginBottom: 14 }}>Los conductores de Casa Rodante</div>
+          <Link to="/nosotros"
+            style={{ display: 'inline-block', background: 'var(--azul)', color: '#fff', padding: '9px 20px', borderRadius: 24, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+            Conocé al equipo →
+          </Link>
         </div>
       </div>
     </div>
@@ -132,7 +126,7 @@ function ProgramasPreview({ programas }) {
           </div>
           <Link to="/programas" style={{ fontSize: 13, fontWeight: 700, color: 'var(--naranja)', textDecoration: 'none' }}>Ver todos →</Link>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }}>
+        <div style={{ display: 'grid', gap: 18 }} className='cr-grid-programas'>
           {programas.map(p => {
             const ytId = getYouTubeId(p.url)
             return (
@@ -196,7 +190,7 @@ export default function Portal() {
     setLoading(true)
     Promise.all([
       getNotes({ categoria, page, pageSize: PAGE_SIZE }),
-      getProgramas({ limit: 3 }),
+      getProgramas({ limit: 5 }),
     ]).then(([notasRes, programasRes]) => {
       if (!notasRes.error) { setNotas(notasRes.data || []); setTotal(notasRes.count || 0) }
       if (!programasRes.error) setProgramas(programasRes.data || [])
@@ -226,8 +220,16 @@ export default function Portal() {
       ) : (
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(16px, 4vw, 36px) clamp(16px, 4vw, 28px) 64px' }}>
           <SectionTitle label="Últimas publicaciones" />
-          <div className='cr-grid-notas' style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18, marginBottom: 40 }}>
-            {last3.map(n => <NotaCard key={n.id} nota={n} />)}
+          <style>{`
+            .cr-grid-notas { grid-template-columns: repeat(5, 1fr) !important; }
+            .cr-grid-programas { grid-template-columns: repeat(5, 1fr) !important; }
+            @media (max-width: 768px) {
+              .cr-grid-notas { grid-template-columns: repeat(3, 1fr) !important; }
+              .cr-grid-programas { grid-template-columns: repeat(3, 1fr) !important; }
+            }
+          `}</style>
+          <div className='cr-grid-notas' style={{ display: 'grid', gap: 18, marginBottom: 40 }}>
+            {notas.slice(0, 5).map(n => <NotaCard key={n.id} nota={n} />)}
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Link to="/notas" style={{ background: 'var(--azul)', color: '#fff', padding: '10px 28px', borderRadius: 24, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
