@@ -34,19 +34,6 @@ function EquipoPreview() {
   ]
   return (
     <div style={{ background: 'var(--crema-dark)', padding: '56px 28px' }}>
-      <style>{`
-        .cr-grid-notas { grid-template-columns: repeat(5, 1fr) !important; }
-        .cr-grid-programas { grid-template-columns: repeat(5, 1fr) !important; }
-        .cr-equipo-wrap { flex-direction: row; }
-        .cr-equipo-avatars { gap: 0; }
-        .cr-equipo-avatar { width: 110px; height: 110px; margin-left: -22px; }
-        .cr-equipo-avatar:first-child { margin-left: 0; }
-        @media (max-width: 600px) {
-          .cr-grid-notas { grid-template-columns: repeat(3, 1fr) !important; }
-          .cr-grid-programas { grid-template-columns: repeat(3, 1fr) !important; }
-          .cr-equipo-wrap { flex-direction: column; align-items: center; text-align: center; }
-        }
-      `}</style>
       <div className="cr-equipo-wrap" style={{ maxWidth: 700, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 36 }}>
         <div className="cr-equipo-avatars" style={{ display: 'flex', alignItems: 'center' }}>
           {conductores.map((p, i) => (
@@ -213,6 +200,15 @@ export default function Portal() {
 
   return (
     <div>
+      <style>{`
+        .cr-grid-notas { grid-template-columns: repeat(5, 1fr) !important; }
+        .cr-grid-programas { grid-template-columns: repeat(5, 1fr) !important; }
+        @media (max-width: 600px) {
+          .cr-grid-notas { grid-template-columns: repeat(3, 1fr) !important; }
+          .cr-grid-programas { grid-template-columns: repeat(3, 1fr) !important; }
+          .cr-equipo-wrap { flex-direction: column !important; align-items: center !important; text-align: center; }
+        }
+      `}</style>
       <Navbar categoriaActiva={categoria} onCategoria={setCategoria} />
 
       {/* Hero GIF */}
